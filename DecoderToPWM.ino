@@ -3,7 +3,7 @@
 /* L'option JetiEx ne fonctionne qu'avec un Pro Micro */
 /* L'option Failsafe ne fonctionne qu'avec un Pro Mini */
 
-/* Décodeur pour commander jusqu'à 16 servos à partir d'un signal type:
+/* Décodeur pour commander 1 servos sur un canal choisi à partir d'un signal type:
  - PPM basé sur les librairies RC Navy https://github.com/RC-Navy/DigisparkArduinoIntegration/tree/master/libraries/DigisparkTinyCppmReader
  - SBUS basé sur les librairies RC Navy https://github.com/RC-Navy/DigisparkArduinoIntegration/tree/master/libraries/RcBusRx
     Un inverseur du signal est nécessaire (http://www.ernstc.dk/arduino/sbus.html)
@@ -319,7 +319,7 @@ void loop()
         {
           InputSignalExist = true;
           //Idx=TinyPpmReader.width_us(1);Serial.print(F("Ch1"));Serial.print(F("="));Serial.print(Idx);Serial.println(F(" us"));
-          myservo1.write_us(TinyCppmReader.width_us(1));
+          myservo1.write_us(TinyCppmReader.width_us(canalNb));
           SoftRcPulseOut::refresh(1);
             
         }
@@ -338,7 +338,7 @@ void loop()
         if(RcBusRx.isSynchro()) /* One SBUS frame just arrived */
         {
           InputSignalExist = true;
-          myservo1.write_us(RcBusRx.width_us(1));
+          myservo1.write_us(RcBusRx.width_us(canalNb));
           SoftRcPulseOut::refresh(1);      
         }
         else
@@ -355,7 +355,7 @@ void loop()
           InputSignalExist = true;
           uint16_t ch[16];
           Dsmx.getChannelValues(ch, 16);
-          myservo1.write_us(ch[0]);
+          myservo1.write_us(ch[canalNb]);
           SoftRcPulseOut::refresh(1);
           //Serial.print("Fade count = ");
           //Serial.println(rx.getFadeCount());
@@ -375,7 +375,7 @@ void loop()
 //          uint16_t pitch    = rc.channelValue[1];
 //          uint16_t yaw      = rc.channelValue[2];
 //          uint16_t throttle = rc.channelValue[3];
-          myservo1.write_us(rc.channelValue[0]);
+          myservo1.write_us(rc.channelValue[canalNb]);
           SoftRcPulseOut::refresh(1);
         }              
       }
