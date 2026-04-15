@@ -1,4 +1,4 @@
-/* Ce code ne fonctionne qu'avec un Arduino Uno,Pro Mini ou Pro Micro */
+/* Ce code ne fonctionne qu'avec un Arduino Pro Micro */
 
 /* L'option JetiEx ne fonctionne qu'avec un Pro Micro */
 /* L'option Nv.Failsafe ne fonctionne qu'avec un Pro Mini */
@@ -24,7 +24,7 @@
 #include <Streaming.h>
 #include <SerialCommand.h>
 
-float VERSION_DECODER = 1.0;
+float VERSION_DECODER = 1.1;
 
 
 uint32_t LedStartMs=millis();
@@ -40,8 +40,9 @@ static bool dbgRun = true;
 #define LED_SIGNAL_NOTFOUND   1000
 #define LED    				        17 // declare LED in pin 17
 #define FAILSAFE_BUTTON       A3 // button on A3
+#define PWM_OUTPUT            2
 
-#define PRINT_BUF_SIZE      100
+#define PRINT_BUF_SIZE        100
 static char PrintBuf[PRINT_BUF_SIZE + 1];
 #define PRINTF(fmt, ...)    do{if(Serial){snprintf_P(PrintBuf, PRINT_BUF_SIZE, PSTR(fmt) ,##__VA_ARGS__);Serial.print(PrintBuf);}}while(0)
 //#define PRINT_P(FlashStr)   do{if(Serial){Serial.print(FlashStr);}}while(0)
@@ -118,41 +119,36 @@ void setup()
     case INPUT_MODE_SBUS:
       blinkNTime(2,125,250);
       Serial << F("SBUS in use") << endl;
-      Serial.flush();delay(500);
-      Serial.begin(SBUS_RX_SERIAL_CFG);
-      RcBusRx.serialAttach(&Serial);        
+      Serial1.begin(SBUS_RX_SERIAL_CFG);
+      RcBusRx.serialAttach(&Serial1);        
       RcBusRx.setProto(RC_BUS_RX_SBUS);
       break;
     case INPUT_MODE_IBUS:
       blinkNTime(3,125,250);
       Serial << F("IBUS in use") << endl;
-      Serial.flush();
-      Serial.begin(IBUS_RX_SERIAL_CFG);
-      RcBusRx.serialAttach(&Serial);        
+      Serial1.begin(IBUS_RX_SERIAL_CFG);
+      RcBusRx.serialAttach(&Serial1);        
       RcBusRx.setProto(RC_BUS_RX_IBUS);
       break;
     case INPUT_MODE_SUMD:
       blinkNTime(4,125,250);
       Serial << F("SUMD Nv.InputType in use") << endl;
-      Serial.flush();
-      Serial.begin(SUMD_RX_SERIAL_CFG);
-      RcBusRx.serialAttach(&Serial);        
+      Serial1.begin(SUMD_RX_SERIAL_CFG);
+      RcBusRx.serialAttach(&Serial1);        
       RcBusRx.setProto(RC_BUS_RX_SUMD);
       break;
     case INPUT_MODE_JETI:
       blinkNTime(5,125,250);
       Serial << F("JETIEx in use") << endl;
-      Serial.flush();
-      Serial.begin(JETI_RX_SERIAL_CFG);
-      RcBusRx.serialAttach(&Serial);        
+      Serial1.begin(JETI_RX_SERIAL_CFG);
+      RcBusRx.serialAttach(&Serial1);        
       RcBusRx.setProto(RC_BUS_RX_JETI);
       break;
     case INPUT_MODE_SRXL:
       blinkNTime(6,125,250);
       Serial << F("SRLX in use") << endl;
-      Serial.flush(); // wait for last transmitted data to be sent
-      Serial.begin(SRXL_RX_SERIAL_CFG);
-      RcBusRx.serialAttach(&Serial);        
+      Serial1.begin(SRXL_RX_SERIAL_CFG);
+      RcBusRx.serialAttach(&Serial1);        
       RcBusRx.setProto(RC_BUS_RX_SRXL);
       break;
     case INPUT_MODE_SRXL2:
@@ -161,15 +157,14 @@ void setup()
     case INPUT_MODE_CRSF:
       blinkNTime(8,125,250);
       Serial << F("CRSF in use") << endl;
-      Serial.flush(); // wait for last transmitted data to be sent
-      Serial.begin(CRSF_RX_SERIAL_CFG);
-      RcBusRx.serialAttach(&Serial);        
+      Serial1.begin(CRSF_RX_SERIAL_CFG);
+      RcBusRx.serialAttach(&Serial1);        
       RcBusRx.setProto(RC_BUS_RX_CRSF);
       break;      
   }
 
 
-  PwmOutput.attach(2);
+  PwmOutput.attach(PWM_OUTPUT);
 
 }//setup
 
